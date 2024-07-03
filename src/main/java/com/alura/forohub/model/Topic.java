@@ -58,6 +58,7 @@ public class Topic implements Serializable {
 
     @ManyToOne()
     @JoinColumn(name = "course_id")
+    @JsonManagedReference
     private Course course;
 
     private Instant created_at;

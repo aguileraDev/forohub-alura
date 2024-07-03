@@ -76,4 +76,15 @@ public class ForoService {
         return topicRepository.findByStatusTrue(pagination).map(TopicDto::new);
     }
 
+    @Transactional
+    public ResponseEntity getOneTopic(Integer id){
+        Optional<Topic> topic = topicRepository.findById((long) id);
+
+        if(topic.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().body(new TopicDto(topic.get()));
+    }
+
 }

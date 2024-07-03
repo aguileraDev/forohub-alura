@@ -1,7 +1,17 @@
 package com.alura.forohub.model;
 
 import com.alura.forohub.dto.CreateCourseDto;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +49,7 @@ public class Course implements Serializable {
             mappedBy = "course",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Topic> topics;
 
     public Course(CreateCourseDto createCourseDto){
