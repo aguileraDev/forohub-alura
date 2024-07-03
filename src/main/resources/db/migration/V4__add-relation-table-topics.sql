@@ -1,0 +1,6 @@
+ALTER TABLE topics ADD COLUMN author_id int not null,
+ADD CONSTRAINT author_fk
+FOREIGN KEY(author_id)
+REFERENCES users(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
