@@ -1,7 +1,7 @@
 package com.alura.forohub.dto;
 
+
 import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,24 +9,17 @@ import jakarta.validation.constraints.Size;
 /**
  * @author Manuel Aguilera / @aguileradev
  */
-public record CreateTopicDto(
+public record CreateAnswerDto(
         @NotBlank
-        @JsonAlias({"title","titulo"})
-        @Size(max = 64)
-        String title,
-
-        @NotBlank
+        @Size(max = 1000)
         @JsonAlias({"message","mensaje"})
-        @Size(max = 1024)
         String message,
-
-        @NotBlank
-        String author,
-
         @NotNull
-        @JsonAlias({"course","curso"})
-        Integer course
-
-
+        @JsonAlias({"topic","topico"})
+        Integer topic,
+        @NotBlank
+        @JsonAlias({"author","autor"})
+        String author
 ) {
+
 }

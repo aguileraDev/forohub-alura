@@ -2,6 +2,7 @@ package com.alura.forohub.model;
 
 
 import com.alura.forohub.dto.CreateUserDto;
+import com.alura.forohub.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -58,4 +59,8 @@ public class User implements Serializable {
         this.password = createUserDto.password();
     }
 
+    public User(UserDto userDto) {
+        this.id = userDto.id();
+        this.name = userDto.name();
+    }
 }

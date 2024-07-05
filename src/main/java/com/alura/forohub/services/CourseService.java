@@ -1,18 +1,20 @@
 package com.alura.forohub.services;
 
+import com.alura.forohub.dto.CourseDto;
 import com.alura.forohub.dto.CreateCourseDto;
 import com.alura.forohub.model.Course;
 import com.alura.forohub.repository.CourseRepository;
-import com.alura.forohub.repository.TopicRepository;
+import com.alura.forohub.utility.exceptions.NotFoundException;
+import com.alura.forohub.utility.exceptions.RegisterException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
+
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -29,7 +31,7 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
     @Transactional
-    public ResponseEntity registerCourse(CreateCourseDto createCourseDto){
+    public CourseDto registerCourse(CreateCourseDto createCourseDto){
         var course = new Course(createCourseDto);
         Optional<Course> courseDb;
 
@@ -38,16 +40,20 @@ public class CourseService {
         }catch (DataIntegrityViolationException e){
             String message = "Curso no cumple restricciones o ya existe en la base de datos";
             logger.error(message);
-            return ResponseEntity.badRequest().build();
+            throw new RegisterException(message);
         }
 
-        var uri = UriComponentsBuilder.fromUriString("/courses/{id}").buildAndExpand(courseDb.get().getId()).toUri();
-
-        return ResponseEntity.created(uri).body(courseDb.get());
+        return new CourseDto(courseDb.get());
     }
 
     @Transactional
-    public Optional<Course> getCourseById(Integer id){
-        return courseRepository.findById((long) id);
+    public CourseDto getCourseById(Integer id){
+        try{
+            return new CourseDto(courseRepository.findById((long) id).orElseThrow());
+        }catch (NoSuchElementException e){
+            String message = String.format("Curso con el id %d no encontrado",id);
+            logger.error(message);
+            throw new  NotFoundException(message);
+        }
     }
 }

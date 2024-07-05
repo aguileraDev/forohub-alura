@@ -1,5 +1,6 @@
 package com.alura.forohub.model;
 
+import com.alura.forohub.dto.CourseDto;
 import com.alura.forohub.dto.CreateCourseDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
@@ -55,5 +56,11 @@ public class Course implements Serializable {
     public Course(CreateCourseDto createCourseDto){
         this.name = createCourseDto.name();
         this.category = Category.fromString(createCourseDto.category());
+    }
+
+    public Course(CourseDto courseDto){
+        this.id = courseDto.id();
+        this.name = courseDto.name();
+        this.category = Category.fromString(courseDto.category());
     }
 }

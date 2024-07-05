@@ -1,12 +1,13 @@
 package com.alura.forohub.services;
 
-import com.alura.forohub.dto.CreateCourseDto;
-import com.alura.forohub.dto.CreateTopicDto;
-import com.alura.forohub.dto.TopicDto;
+
+import com.alura.forohub.dto.*;
 import com.alura.forohub.model.Course;
 import com.alura.forohub.model.Topic;
-import com.alura.forohub.repository.CourseRepository;
+import com.alura.forohub.model.User;
 import com.alura.forohub.repository.TopicRepository;
+import com.alura.forohub.utility.exceptions.NotFoundException;
+import com.alura.forohub.utility.exceptions.RegisterException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
-
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -43,32 +42,26 @@ public class ForoService {
     }
 
     @Transactional
-    public ResponseEntity registerTopic(CreateTopicDto createTopicDto){
+    public TopicDto registerTopic(CreateTopicDto createTopicDto){
         var topic = new Topic(createTopicDto);
         Optional<Topic> topicDb;
 
-        var user = userService.findByIdOrEmailOrName(createTopicDto.author());
-        var course = courseService.getCourseById(createTopicDto.course());
+        UserDto user = userService.getOneUser(createTopicDto.author());
+        CourseDto course = courseService.getCourseById(createTopicDto.course());
 
-        if(user.isEmpty() || course.isEmpty()){
-            String message = "Usuario o curso no encontrado";
-            logger.error(message);
-            return ResponseEntity.badRequest().build();
-        }
-
-        topic.setAuthor(user.get());
-        topic.setCourse(course.get());
+        topic.setAuthor(new User(user));
+        topic.setCourse(new Course(course));
 
         try{
            topicDb = Optional.of(topicRepository.save(topic));
         }catch (DataIntegrityViolationException e){
             String message = "Topico no cumple restricciones o ya existe en la base de datos";
             logger.error(message);
-            return ResponseEntity.badRequest().build();
+            throw new RegisterException(message);
         }
-        var URI = UriComponentsBuilder.fromUriString("/topics/{id}").buildAndExpand(topicDb.get().getId()).toUri();
 
-        return ResponseEntity.created(URI).body(new TopicDto(topicDb.get()));
+
+        return new TopicDto(topicDb.get());
     }
 
     @Transactional
@@ -77,14 +70,50 @@ public class ForoService {
     }
 
     @Transactional
-    public ResponseEntity getOneTopic(Integer id){
-        Optional<Topic> topic = topicRepository.findById((long) id);
-
-        if(topic.isEmpty()){
-            return ResponseEntity.notFound().build();
+    public TopicDto getOneTopic(Integer id){
+        Topic topic;
+        try{
+            topic = topicRepository.findById((long)id).orElseThrow();
+        }catch (NoSuchElementException e){
+            String message = String.format("Topico con el id %d no encontrado",id);
+            throw new NotFoundException(message);
         }
 
-        return ResponseEntity.ok().body(new TopicDto(topic.get()));
+        return new TopicDto(topic);
+    }
+
+    @Transactional
+    public TopicDto updateTopic(Integer id, UpdateTopicDto updateTopicDto){
+        Topic topic = new Topic(getOneTopic(id));
+        topic.setId((long)id);
+
+        if(updateTopicDto.message() != null){
+            topic.setMessage(updateTopicDto.message());
+        }
+
+        if(updateTopicDto.title() != null){
+            topic.setTitle(updateTopicDto.title());
+        }
+
+        if(updateTopicDto.author() != null){
+            topic.setAuthor(new User(userService.getOneUser(updateTopicDto.author())));
+        }
+
+        if(updateTopicDto.course() != null){
+            topic.setCourse(new Course(courseService.getCourseById(updateTopicDto.course())));
+        }
+
+        topicRepository.save(topic);
+
+        return new TopicDto(topic);
+    }
+
+    @Transactional
+    public void disableTopic(Integer id){
+        Topic topic = new Topic(getOneTopic(id));
+        topic.setStatus(false);
+        topicRepository.save(topic);
+
     }
 
 }

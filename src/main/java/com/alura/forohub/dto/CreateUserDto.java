@@ -11,17 +11,18 @@ import jakarta.validation.constraints.Size;
  */
 public record CreateUserDto(
         @NotBlank
-        @JsonAlias({"full_name"})
+        @JsonAlias({"full_name","nombre"})
         @Size(max = 64)
         String name,
 
         @NotBlank
-        @JsonAlias({"mail"})
+        @JsonAlias({"mail","correo"})
         @Size(max = 32)
         @Email
         String email,
 
         @NotBlank
         @Size(max = 255)
+        @JsonAlias({"password","clave"})
         String password
 ) {}

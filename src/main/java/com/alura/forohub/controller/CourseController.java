@@ -1,8 +1,8 @@
 package com.alura.forohub.controller;
 
+import com.alura.forohub.dto.CourseDto;
 import com.alura.forohub.dto.CreateCourseDto;
 import com.alura.forohub.services.CourseService;
-import com.alura.forohub.services.ForoService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 /**
  * @author Manuel Aguilera / @aguileradev
@@ -31,6 +34,8 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity createCourse(@RequestBody @Valid CreateCourseDto createCourseDto){
-        return courseService.registerCourse(createCourseDto);
+        CourseDto course = courseService.registerCourse(createCourseDto);
+        URI uri = UriComponentsBuilder.fromUriString("/courses/{id}").buildAndExpand(course.id()).toUri();
+        return ResponseEntity.created(uri).body(course);
     }
 }

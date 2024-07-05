@@ -2,6 +2,7 @@ package com.alura.forohub.controller;
 
 import com.alura.forohub.dto.CreateTopicDto;
 import com.alura.forohub.dto.TopicDto;
+import com.alura.forohub.dto.UpdateTopicDto;
 import com.alura.forohub.services.ForoService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -11,12 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 /**
  * @author Manuel Aguilera / @aguileradev
@@ -35,8 +34,14 @@ public class TopicController {
     }
 
     @PostMapping
-    public ResponseEntity createTopic(@RequestBody @Valid CreateTopicDto createTopicDto){
-        return foroService.registerTopic(createTopicDto);
+    public ResponseEntity<TopicDto> createTopic(@RequestBody @Valid CreateTopicDto createTopicDto){
+        TopicDto topic = foroService.registerTopic(createTopicDto);
+
+        URI uri = UriComponentsBuilder.fromUriString("/topics/{id}").buildAndExpand(topic.id()).toUri();
+
+        return ResponseEntity.created(uri).body(topic);
+
+
     }
 
     @GetMapping
@@ -47,7 +52,25 @@ public class TopicController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getTopic(@PathVariable @Valid Integer id){
-        return foroService.getOneTopic(id);
+    public ResponseEntity<TopicDto> getTopic(@PathVariable @Valid Integer id){
+        var topic = foroService.getOneTopic(id);
+
+        return ResponseEntity.ok().body(topic);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TopicDto> updateTopic(
+            @PathVariable Integer id,
+            @RequestBody @Valid UpdateTopicDto updateTopicDto) {
+
+        TopicDto topicDto = foroService.updateTopic(id, updateTopicDto);
+        return ResponseEntity.ok().body(topicDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity softDeleteTopic(@PathVariable @Valid Integer id){
+        foroService.disableTopic(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
