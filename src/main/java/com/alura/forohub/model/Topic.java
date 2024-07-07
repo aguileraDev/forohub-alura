@@ -1,6 +1,6 @@
 package com.alura.forohub.model;
 
-import com.alura.forohub.dto.AnswerDto;
+
 import com.alura.forohub.dto.CreateTopicDto;
 import com.alura.forohub.dto.TopicDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -28,7 +28,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 

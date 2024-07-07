@@ -1,8 +1,11 @@
 package com.alura.forohub.controller;
 
+import com.alura.forohub.utility.exceptions.BearerTokenException;
 import com.alura.forohub.utility.exceptions.NotFoundException;
 import com.alura.forohub.utility.exceptions.RegisterException;
 import com.alura.forohub.utility.exceptions.ResourceNotFoundException;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +63,22 @@ public class ExceptionHandlerController {
         return ResponseEntity.internalServerError().body(message);
 
     }
+
+    @ExceptionHandler(BearerTokenException.class)
+    public ResponseEntity bearerToken(BearerTokenException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(JWTCreationException.class)
+    public ResponseEntity jwtCreation(JWTCreationException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity jwtVerify(JWTVerificationException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
     public record ExceptionFieldErrors(String field, String message){
         public ExceptionFieldErrors(FieldError fieldError){
             this(fieldError.getField(), fieldError.getDefaultMessage());

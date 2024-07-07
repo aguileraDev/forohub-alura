@@ -2,7 +2,6 @@ package com.alura.forohub.model;
 
 import com.alura.forohub.dto.AnswerDto;
 import com.alura.forohub.dto.CreateAnswerDto;
-import com.alura.forohub.dto.TopicDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;

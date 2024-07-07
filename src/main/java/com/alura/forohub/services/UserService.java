@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -76,5 +77,10 @@ public class UserService {
                 logger.info(message);
                 return Optional.ofNullable(userRepository.findByEmailOrName(author));
             }
+    }
+
+    @Transactional
+    public UserDetails getUserForLogin(String name){
+        return userRepository.findByNameAndIsActiveTrue(name);
     }
 }
