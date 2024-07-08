@@ -73,7 +73,7 @@ public class ForoService {
     public TopicDto getOneTopic(Integer id){
         Topic topic;
         try{
-            topic = topicRepository.findById((long)id).orElseThrow();
+            topic = topicRepository.findByIdAndStatusTrue((long)id).orElseThrow();
         }catch (NoSuchElementException e){
             String message = String.format("Topico con el id %d no encontrado",id);
             throw new NotFoundException(message);

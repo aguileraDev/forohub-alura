@@ -4,6 +4,11 @@ import com.alura.forohub.dto.LoginDto;
 import com.alura.forohub.dto.NewLoginDto;
 import com.alura.forohub.model.User;
 import com.alura.forohub.security.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +36,20 @@ public class SecurityController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Operation(summary = "create a new user login")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "login successfully",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = LoginDto.class)
+                            )}),
+            @ApiResponse(
+                    responseCode = "403",
+            description = "invalid credentials",
+            content = {@Content})
+    })
     @PostMapping
     public ResponseEntity registerLogin(@RequestBody @Valid NewLoginDto newLoginDto){
         String username = newLoginDto.username();

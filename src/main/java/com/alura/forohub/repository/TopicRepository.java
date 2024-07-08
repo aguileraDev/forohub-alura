@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * @author Manuel Aguilera / @aguileradev
  */
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface TopicRepository extends JpaRepository<Topic, Long> {
 
     Page<Topic> findByStatusTrue(Pageable pagination);
+    Optional<Topic> findByIdAndStatusTrue(Long id);
 }

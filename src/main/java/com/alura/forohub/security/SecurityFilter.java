@@ -38,13 +38,17 @@ public class SecurityFilter extends OncePerRequestFilter {
         final String uri = request.getRequestURI();
         final String method = request.getMethod();
 
-        boolean isLoginEndpoint = false;
+        boolean isLoginOrSwaggerEndpoint = false;
 
-        if(uri.equalsIgnoreCase("/api/v1/login") && method.equalsIgnoreCase("POST")){
-            isLoginEndpoint = true;
+        if(uri.contains("login")  && method.equalsIgnoreCase("POST")){
+            isLoginOrSwaggerEndpoint = true;
         }
 
-        if(!isLoginEndpoint){
+        if(uri.contains("swagger") || uri.contains("api-docs")){
+            isLoginOrSwaggerEndpoint = true;
+        }
+
+        if(!isLoginOrSwaggerEndpoint){
             String authHeader;
             String token;
 
