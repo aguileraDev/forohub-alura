@@ -44,6 +44,18 @@ api.security.secret=${JWT_SECRET}
 - Spring Security
 - Java Jwt
 
+## Documentación Swagger
+*ruta local:* **http://localhost:8080/api/v1/swagger-ui/index.html**
+## Credenciales de prueba
+Realiza un login *entorno local(http://localhost:8080/api/v1/login)* con las credenciales
+```
+{
+	"username":"root",
+	"password":"root1234"
+}
+
+```
+
 ## Agradecimientos
 Gracias a todo el equipo educativo y técnico que hacen posible el funcionamiento del programa Oracle Next Educatión.
 ## Autor
